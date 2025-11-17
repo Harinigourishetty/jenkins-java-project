@@ -12,11 +12,12 @@ ADD nexus-credentials.txt /tmp/nexus.txt
 # Pass artifact name, version, and repository dynamically
 ARG ARTIFACT_NAME
 ARG ARTIFACT_VERSION
-ARG REPOSITORY=maven-releases  # default, override for snapshots
+ARG REPOSITORY=maven-releases  # default repo
 
-# Download WAR from Nexus dynamically, keep original name
+# Download WAR from Nexus using wget
 RUN NEXUS_USER=$(sed -n '1p' /tmp/nexus.txt) && \
     NEXUS_PASS=$(sed -n '2p' /tmp/nexus.txt) && \
+    echo "Downloading ${ARTIFACT_NAME}-${ARTIFACT_VERSION}.war from ${REPOSITORY}..." && \
     wget --user=$NEXUS_USER --password=$NEXUS_PASS \
          -O /usr/local/tomcat/webapps/${ARTIFACT_NAME}-${ARTIFACT_VERSION}.war \
          "http://3.19.188.209:8081/repository/${REPOSITORY}/in/RAHAM/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}.war"
