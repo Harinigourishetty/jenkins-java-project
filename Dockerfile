@@ -9,14 +9,15 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Add Nexus credentials (line1=username, line2=password)
 ADD nexus-credentials.txt /tmp/nexus.txt
 
+# Pass artifact name and version dynamically
 ARG ARTIFACT_VERSION
 ARG ARTIFACT_NAME
 
-# Download WAR from Nexus dynamically
+# Download WAR from Nexus dynamically and keep original name
 RUN NEXUS_USER=$(sed -n '1p' /tmp/nexus.txt) && \
     NEXUS_PASS=$(sed -n '2p' /tmp/nexus.txt) && \
     curl -u $NEXUS_USER:$NEXUS_PASS \
-    -o /usr/local/tomcat/webapps/ROOT.war \
+    -o /usr/local/tomcat/webapps/${ARTIFACT_NAME}-${ARTIFACT_VERSION}.war \
     "http://3.19.188.209:8081/repository/maven-releases/in/RAHAM/${ARTIFACT_NAME}/${ARTIFACT_VERSION}/${ARTIFACT_NAME}-${ARTIFACT_VERSION}.war"
 
 EXPOSE 8080
