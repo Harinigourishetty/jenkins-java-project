@@ -9,12 +9,12 @@ RUN rm -rf /usr/local/tomcat/webapps/*
 # Add Nexus credentials (line1=username, line2=password)
 ADD nexus-credentials.txt /tmp/nexus.txt
 
-# Pass artifact name and version dynamically
-ARG ARTIFACT_VERSION
+# Pass artifact name, version, and repository dynamically
 ARG ARTIFACT_NAME
-ARG REPOSITORY=maven-releases  # default repo, can override if needed
+ARG ARTIFACT_VERSION
+ARG REPOSITORY=maven-releases  # default, override for snapshots
 
-# Download WAR from Nexus dynamically using wget and keep original name
+# Download WAR from Nexus dynamically, keep original name
 RUN NEXUS_USER=$(sed -n '1p' /tmp/nexus.txt) && \
     NEXUS_PASS=$(sed -n '2p' /tmp/nexus.txt) && \
     wget --user=$NEXUS_USER --password=$NEXUS_PASS \
